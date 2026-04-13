@@ -1,6 +1,6 @@
 import json
 import sqlite3
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from . import config
 
@@ -181,7 +181,7 @@ def _update_cursor(conn, item_id, cursor):
             cursor=excluded.cursor,
             last_synced=excluded.last_synced
         """,
-        (item_id, cursor, datetime.utcnow().isoformat()),
+        (item_id, cursor, datetime.now(UTC).isoformat()),
     )
 
 
