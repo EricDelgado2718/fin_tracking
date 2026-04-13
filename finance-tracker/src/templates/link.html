@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Link {{ institution }}</title>
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+</head>
+<body>
+  <h1>Linking: {{ institution }}</h1>
+  <button id="link">Open Plaid Link</button>
+  <pre id="status"></pre>
+  <script>
+    const institution = {{ institution|tojson }};
+    const linkToken = {{ link_token|tojson }};
+    const status = document.getElementById("status");
+    const handler = Plaid.create({
+      token: linkToken,
+      onSuccess: (public_token, metadata) => {
+        status.textContent = "Exchanging public token...";
+        fetch("/exchange", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({public_token, institution}),
+        })
+          .then(r => r.json())
+          .then(j => { status.textContent = JSON.stringify(j, null, 2); })
+          .catch(e => { status.textContent = "error: " + e; });
+      },
+      onExit: (err) => { if (err) status.textContent = "exit: " + JSON.stringify(err); },
+    });
+    document.getElementById("link").addEventListener("click", () => handler.open());
+  </script>
+</body>
+</html>
