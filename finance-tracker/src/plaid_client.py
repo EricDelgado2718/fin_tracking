@@ -67,7 +67,15 @@ def _raw_transactions_sync(access_token, cursor=None):
 
 
 def _raw_accounts_balance_get(access_token):
-    return _post("/accounts/balance/get", {"access_token": access_token})
+    from datetime import UTC, datetime, timedelta
+    min_updated = (datetime.now(UTC) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return _post(
+        "/accounts/balance/get",
+        {
+            "access_token": access_token,
+            "options": {"min_last_updated_datetime": min_updated},
+        },
+    )
 
 
 def create_link_token(user_id="finance-tracker-user", products=None, institution=None):

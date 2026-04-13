@@ -1,6 +1,10 @@
-from flask import Flask, jsonify, render_template, request
+from dotenv import load_dotenv
 
-from . import plaid_client, tokens
+load_dotenv()
+
+from flask import Flask, jsonify, render_template, request  # noqa: E402
+
+from . import plaid_client, tokens  # noqa: E402
 
 
 def create_link_token(institution, products=None):
@@ -50,4 +54,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host="127.0.0.1", port=5050, debug=False)

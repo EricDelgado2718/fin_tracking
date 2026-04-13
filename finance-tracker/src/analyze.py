@@ -66,6 +66,7 @@ def detect_transfers(conn, window_days=2):
 
 
 def _latest_balances(conn, as_of):
+    as_of_iso = as_of.isoformat() if isinstance(as_of, date) else as_of
     cur = conn.execute(
         """
         SELECT b.account_id, b.account_type, b.balance_current
@@ -77,7 +78,23 @@ def _latest_balances(conn, as_of):
             GROUP BY account_id
         ) m ON m.account_id = b.account_id AND m.latest = b.snapshot_date
         """,
-        (as_of.isoformat() if isinstance(as_of, date) else as_of,),
+        (as_of_iso,),
+    )
+    rows = cur.fetchall()
+    if rows:
+        return rows
+    # Fallback: no snapshots on or before as_of — use the earliest snapshot per account
+    # so freshly-linked accounts still contribute to net worth.
+    cur = conn.execute(
+        """
+        SELECT b.account_id, b.account_type, b.balance_current
+        FROM balances b
+        JOIN (
+            SELECT account_id, MIN(snapshot_date) AS earliest
+            FROM balances
+            GROUP BY account_id
+        ) m ON m.account_id = b.account_id AND m.earliest = b.snapshot_date
+        """
     )
     return cur.fetchall()
 

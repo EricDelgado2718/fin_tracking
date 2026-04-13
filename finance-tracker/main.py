@@ -3,7 +3,11 @@ import json
 import sys
 from datetime import date
 
-from src import analyze, db, fetch, report
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from src import analyze, db, fetch, report  # noqa: E402 — load_dotenv must run first
 
 
 init_db = db.init_db
