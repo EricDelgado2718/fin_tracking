@@ -1,0 +1,9 @@
+.env
+*.db
+tokens.enc
+credentials.json
+data/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
