@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest>=8.0
+freezegun>=1.5
+responses>=0.25
